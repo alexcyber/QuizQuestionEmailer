@@ -1,0 +1,7 @@
+__pycache__/*
+webpages/*
+config.txt
+*questionpool.csv*
+*emailpool.csv*
+commands.txt
+
