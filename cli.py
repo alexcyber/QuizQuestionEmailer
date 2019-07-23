@@ -11,7 +11,7 @@ while cont:
         print('sent')
     if uInput == 's':
         problemQ = randomProblem(app.conf['questionPool'], 1, app.conf['logging'])
-        userInput = int(input("What is the question number you would like to send?"))
+        userInput = int(input("What is the question number you would like to send? "))
         problemQ.returnProblem(userInput)
         cont = app.sendEmail(cont, problemQ)
         print('sent')

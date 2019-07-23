@@ -44,7 +44,7 @@ class randomProblem:
 
         #if there is an answer, add answer clause to toString
         if not self.problem[2] == -1:
-            format = format + f'\nAnswer: \n Penis{self.problem[2]}'
+            format = format + f'\nAnswer: \n {self.problem[2]}'
 
         if self.problem[3][0] != "":
             format = format + "\n\nReason: \n"
@@ -78,12 +78,12 @@ class randomProblem:
         if self.logging:
             print(f"In Random Problem.returnProblem(), before opening {self.fileName}")
 
-        with open('questionpool.csv') as csvDataFile:
+        with open(self.fileName) as csvDataFile:
             csvReader = csv.reader(csvDataFile)
             questionsList.extend(csvReader)
         csvDataFile.close()
         # opens CSV file
-        with open('questionpool.csv') as csvDataFile:
+        with open(self.fileName) as csvDataFile:
             csvReader = csv.reader(csvDataFile)
             # selects the numbered question that was selected beforehand
 
@@ -131,7 +131,7 @@ class randomProblem:
         csvDataFile.close()
 
         #adds url to problem
-        with open('questionpool.csv', 'w', newline='') as csvDataFile:
+        with open(self.fileName, 'w', newline='') as csvDataFile:
             csvWriter = csv.writer(csvDataFile)
             csvWriter.writerows(questionsList)
         csvDataFile.close()

@@ -4,31 +4,31 @@ Creator: alpha
 Date Created: 6.26.19
 
 Purpose:  This application is designed to send a daily email that contains a Cisco test question
-  to a list of email addresses.  Questions will be stored in questionpool.csv file with
-  Question, A, B, C, D, E, correctAnswer, reason.
-  Emails will be stored emailpool.csv Firstname,EmailAddress
+  to a list of email addresses.  Questions will be stored in a CSV with following sections:
+  Question, A, B, C, D, E, correctAnswer, reason, url ending
+  Emails will be stored in a csv as well with the following sections:
+  email, name, correct answered, responded
 
 
 
 main parts:
 app: Interface to add, or remove a question.  Also can send out an email instantly
-csv_parser?: creates, adds, or remove to questionpool.csv
 randomQuestion: returns one question from questionpool.csv, randomizes abcd answers
 emailer: send username, password, sender, reciever(list),
 
 
 
 Ideas:
-- Question answers randomizer
-- Select which topics to focus on
-- Select type of test you are practicing on
-- Packet tracer labs
-- Contest an answer
-- Email their answer back to get answer
-- link to answer?
-- Request a multiple questions a day
-- backup question pool
-- Statistics of usage
+- Question answers randomizer (yes)
+- Select which topics to focus on (probably not gonna happen)
+- Select type of test you are practicing on (probably not gonna happen)
+- Packet tracer labs (nope)
+- Contest an answer (yes)
+- Email their answer back to get answer (nope, new route)
+- link to answer? (the 'new route' mentioned above)
+- Request a multiple questions a day (would like to implement)
+- backup question pool (?)
+- Statistics of usage (cool to have, probably gonna implement at the webserver level)
 
 '''
 
@@ -78,10 +78,10 @@ def sendEmail(cont, problemQ):
     # sets randomQ to the string output of the file
     problemQ = str(problemQ)
     web = updateWebsite(conf['webpageFolderLocation'], url, problemQ)
-    web.createHTMLPage(conf['webpageTemplate'])
+    web.createHTMLPage(conf['webpageTemplate'], conf['motd'], conf['footnote'])
 
     email = emailer(conf['emailUsername'], conf['emailPassword'], conf['emailAddress'],
-                    emailList, "Daily CCNA Question", problemQ, url, conf['logging'])
+                    emailList, "Daily CCNA Question", problemQ, url, conf['websiteRootDirectory'], conf['logging'])
 
     if conf['logging']:
         print("In app.sendEmail.  Made it to right before emailer.sendEmail()")
@@ -106,25 +106,27 @@ def verifyHTMLanswers():
         currentProblem = str(problem)
         url = problem.getURL()
         web = updateWebsite(conf['webpageFolderLocation'], url, currentProblem)
-        web.createHTMLPage(conf['webpageTemplate'])
+        web.createHTMLPage(conf['webpageTemplate'], conf['motd'], conf['footnote'])
     return
 
 
 #Loads config.txt files into a conf dictionary
 def loadconfig():
     f = open("config.txt", "r")
+    value = ""
     for line in f:
         # removes blank lines
         if not re.match(r'^\s*$', line):
             line = line.split("=")  # splits lines from config.txt from key to entry
             if line[0] in ['emailPool', 'questionPool',
-                           'webpageFolderLocation', 'webpageTemplate',
+                           'websiteRootDirectory', 'webpageFolderLocation', 'webpageTemplate', 'motd', 'footnote',
                            'emailUsername', 'emailPassword', 'emailAddress',
                            'logging', 'sequenceNumber']:
-                conf[line[0]] = line[1].strip()
+                conf[line[0]] = '='.join(line[1:]).strip()
             else:
                 print(f"Warning: config file contained '{line[0]}' key.\n" +
                       "This is not a recognized key\n")
+
     # sets conf['logging'] to a boolean
     try:
         if conf['logging'] != "":
@@ -132,7 +134,6 @@ def loadconfig():
     except:
         print("no logging found")
     conf["sequenceNumber"] = int(conf["sequenceNumber"])
-
     f.close()
 
 def editconfig(key, newEntry):
@@ -143,6 +144,7 @@ def editconfig(key, newEntry):
             print(f'{key}={newEntry}')
         else:
             sys.stdout.write(line)
+
 
 conf = {}
 loadconfig()

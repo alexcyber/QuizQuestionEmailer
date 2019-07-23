@@ -1,18 +1,18 @@
-# emailer
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
 
 '''
-Creates an emailer class that can be used to send an email. 
+Creates an emailer class that can be used to send an email.
 '''
 class emailer:
 
-    def __init__(self, username, password, sEmailAddr, rEmailAddr, subject, body, url, logging):
+    def __init__(self, username, password, sEmailAddr, rEmailAddr, subject, body, url, websiteRootDirectory, logging):
         self.username = username
         self.password = password
         self.sEmailAddr = sEmailAddr
         self.rEmailAddr = rEmailAddr
+        self.websiteRootDirectory = websiteRootDirectory
         self.logging = logging
 
         if self.logging:
@@ -28,9 +28,9 @@ class emailer:
         '''
         questionAnswerSplit = body.split('Answer')
         questionAnswerSplit[0] = questionAnswerSplit[0] + "\nFor the answer and (if available) explanation, visit:\n" + \
-                     f"http://www.alexcyber.com/answers/{url}.html"
+                     f"{websiteRootDirectory}{url}.html"
 
-        questionAnswerSplit[0] = questionAnswerSplit[0] + "\n\nFor support, send an email to alex@alexcyber.com"
+        questionAnswerSplit[0] = questionAnswerSplit[0] + f"\n\nFor support, send an email to {username}"
         msg.attach(MIMEText(questionAnswerSplit[0],'plain'))
         #msg.attach(MIMEText(body, 'plain'))
         self.email = msg.as_string()

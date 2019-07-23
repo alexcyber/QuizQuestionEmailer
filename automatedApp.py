@@ -1,4 +1,11 @@
 #!/usr/bin/python36
+'''
+This python script is used to automate sending out an email and creating a corresponding answer html webpage.
+
+Select this script when running from a task scheduler like cron
+'''
+
+
 import app
 from randomProblem import randomProblem
 from datetime import datetime
@@ -17,8 +24,8 @@ def sendEmail(emailTxt):
     except:
         print('Something went wrong with connecting to mail server...')
     # Next, log in to the server
-    server.login(app.conf['emailUsername'], app.conf['emailPassword'])  # jbsycbipzoochgrl
-    server.sendmail(app.conf['emailAddress'], 'alex@alexcyber.com', emailTxt)
+    server.login(app.conf['emailUsername'], app.conf['emailPassword'])
+    server.sendmail(app.conf['emailAddress'], app.conf['emailAddress'], emailTxt)
     server.quit()
 
 try:
@@ -45,7 +52,7 @@ try:
     except IndexError:
         sendEmail("Daily CCNA Question failed. \n  Ran out of problems to send (IndexError)")
         print(f'{naive_dt.strftime(fmt)}\tRan out of problems to send (IndexError).')
-        print(f'{naive_dt.strftime(fmt)}\tSent email to alex@alexcyber.com\n')
+        print(f'{naive_dt.strftime(fmt)}\tSent email to {app.conf["emailAddress"]}\n')
         cont = False
     else:
         # print datestamp if all succeeded
